@@ -1,0 +1,52 @@
+npx create-react-app blogs or npm create vite@latest <my-blog> --template react
+
+cd blogs
+npm start
+npm install react-router-dom
+npm install material-ui/core
+pip install django-cors-headers
+
+Info:
+Strict Mode
+
+
+
+
+from django.contrib.auth import authenticate, login
+
+def my_view(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+
+
+def loginpage(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return redirect('home')
+        else:
+            return HttpResponse("Username or Password is incorrect!!!")
+
+    return render(request, 'login.html')
+
+
+from django.contrib.auth import views as auth_views
+from django.shortcuts import resolve_url
+
+class LoginView(auth_views.LoginView):
+    template_name = 'accounts/login.html'
+
+    def get_success_url(self):
+        return resolve_url('accounts:login')
+
+
+

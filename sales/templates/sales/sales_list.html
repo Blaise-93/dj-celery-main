@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% for sale in sales %}
+        <a href="{{ sale.get_absolute_url }}" 
+        class="card-body" >{{sale.transaction_id }}</a>
+
+        {% comment %}   
+        <a href="{% url "sales:sales-detail" sale.pk %}" 
+          class="card-body" >{{sale.transaction_id }}</a>
+         {% endcomment %}
+        {{ sale }} <br>
+    {% endfor%}
+
+{% endblock content %}

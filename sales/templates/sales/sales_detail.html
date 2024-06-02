@@ -1,0 +1,6 @@
+{% extends "base.html" %} {% block content %}
+
+<a href="#{% comment %} {% url "sales:sales-detail" sales.pk %} {% endcomment %}"> {{ sales.transaction_id }} </a>
+<p>The sales man name is {{ sales.salesman }}</p>
+
+{% endblock content %}

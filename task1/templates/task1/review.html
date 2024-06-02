@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block content %}
+{% load crispy_forms_tags %}
+
+<section class=" container-fluid background-primary mt-5 contact_section">
+  <div class="row wow fadeIn text-primary mx-auto">
+    <h2 class="text-center" >Review</h2>
+    <h6 class="display-2 mb text-center text-capitalize mb-3">
+      <i>Write A Review!</i>
+    </h6>
+    <div class="row g-o justify-content-center">
+      <div class="col-lg-8">
+        <form action="." method="post" class="">
+          {% csrf_token %}
+         {% comment %}    {{ form|crispy }} {% endcomment %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-floating">
+               {% comment %}  <input
+                  type="text"
+                  name="full_name"
+                  placeholder="Blaise Joe"
+                  class="form-control"
+                  id="full_name"
+                /> {% endcomment %}
+                {{ form.name}}
+                {% comment %} <label for="name">Your Name: </label> {% endcomment %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating">
+                {% comment %} <input
+                  type="text"
+                  name="email"
+                  placeholder="kenndy@info.com"
+                  id="email"
+                  class="form-control"
+                />
+                <label for="email">Your Email: </label> {% endcomment %}
+                {{ form.email }}
+              </div>
+            </div>
+         
+            <div class="col-12">
+              <div class="message">
+               {% comment %}  <textarea 
+                  name="message"
+                  id="message"
+                  cols="50"
+                  rows="8"
+                  class="form-control"
+                ></textarea>
+                <label for="message" class="text-capitalize">Message</label> {% endcomment %}
+                {{ form.review }}
+              </div>
+            </div>
+            <div class="col-12 text-center">
+              <button
+                class="btn rounded-pill rounded-btn py-3 px-5"
+                type="submit" name="submit" aria-label="submit your message"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+ <!-- back to top button -->
+ <a href="#" aria-label="back-to-top icon"
+ class="shadow btn-primary rounded-circle back_to_top">
+<i class="fas fa-chevron-up"></i>
+</a>
+{% endblock content %}

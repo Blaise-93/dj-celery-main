@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %} Sales {% endblock title %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+    <section class="m-5 py-3" >
+        <form action="." method="post">
+            {% csrf_token %}
+             {{ form|crispy }}
+             <button type="submit" class="btn btn-primary mt-3" >Search</button>
+        </form>
+
+        <h3>Sales Table</h3>
+        {% if sales_df %}
+            {{ sales_df|safe }}
+        {% else %}
+        <p>No data</p>
+        {% endif %}
+    
+    </section>
+
+    <section class="m-5 py-3">
+        <h3>Position Table</h3>
+        {% if positions_df %}
+            {{ positions_df|safe }}
+        {% else %}
+            <p>No data</p>
+        {%endif %}
+        </section>
+
+
+    <section class="m-5 py-3">
+        <h3>Merged Table of Sales and Position</h3>
+        {% if merged_df %}
+            {{ merged_df|safe }}
+        {% else %}
+            <p>No data</p>
+        {%endif %}
+        </section>
+
+    
+    <section class="m-5 py-3">
+        <h3>Group DataFrame</h3>
+        {% if main_df %}
+            {{ main_df|safe }}
+        {% else %}
+            <p>No data</p>
+        {%endif %}
+        </section>
+
+      
+    <section class="m-5 py-3">
+        <h3>Chart</h3>
+        {% if chart %}
+        <img src="data:image/png;base64, {{ chart|safe }}"
+        alt=""
+        />
+        {% else %}
+      <p>No data</p>
+        {%endif %}
+        </section>
+    
+
+
+{% endblock content %}
