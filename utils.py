@@ -9,6 +9,7 @@ import re
 from io import BytesIO
 import matplotlib.pyplot as plt
 import base64
+import seaborn as sns 
 
 def slug_modifier():
     """
@@ -72,7 +73,7 @@ def get_graph():
     return graph
 
 
-def get_chart(chart_type, data, **kwargs):
+def get_chart(chart_type, data, result_by, **kwargs):
 
     
     # backends is respnsible for drawing our plots, switching backends is the func we shall use.
@@ -82,7 +83,12 @@ def get_chart(chart_type, data, **kwargs):
     # refer to the forms chart_type numbers here
     if chart_type == "#1":
         print("Bar chart")
-        plt.bar(data["transaction_id"], data['total_price']) # you can use any of the data key as you want - eg price
+        # with matplotlib
+        """  plt.bar(data["transaction_id"], data['total_price']) # you can use any of the data key as you want - eg price
+        """
+        # with seaborn
+        sns.barplot(x="transaction_id", y='total_price', data=data)
+
     elif chart_type == "#2":
         print("Pie chart")
         labels = kwargs.get("labels") # kwargs - are passed from main_df of the view
@@ -90,11 +96,14 @@ def get_chart(chart_type, data, **kwargs):
         plt.pie(data=data, x="total_price", labels=labels)
     elif chart_type == "#3":
         print("Line chart")
-        plt.plot(data["transaction_id"], data["total_price"])
+        # with matplotlib
+        #plt.plot(data["transaction_id"], data["total_price"], color="green", marker="o", linestyle="dashed")
+        plt.plot(data["transaction_id"], data["total_price"], color="green", marker="+", linestyle="dashed")
     else:
         print("Oops! Failed to identify the chart type")     
     # this will adjust the size of our chart to the fig size
     plt.tight_layout()
+   # plt.title(f"Basic charts: {chart_type}")
     chart = get_graph()
     return chart
 
@@ -111,9 +120,6 @@ print(convert_date_to_dd_mm_yy(today))
 def convert_date(date):
     converted_date = datetime.strptime(date, "%y/%m/%d").strftime("%d/%m/%y")
     return converted_date
-
-# using re
-
 
 def change_date_format(dt):
     return re.sub(r'(\d{2})/(\d{2})/(\d{2})', r'\3/\2/\1', dt)

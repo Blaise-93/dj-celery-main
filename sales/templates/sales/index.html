@@ -1,13 +1,40 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %} Sales {% endblock title %}
 {% load crispy_forms_tags %}
 {% block content %}
 
+{% block extra_css%}
+    <link rel="stylesheet" href="{% static '/css/sales.css' %}">
+{% endblock extra_css %}
+
+
+   <!-- Modal -->
+   <div class="modal fade" id="reportModal" tabindex="-1"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div id="alert-box">
+                        <form id="report-form" method='post'> 
+                            {% csrf_token %}
+                            {{ report_form|crispy }}
+                            <button type="submit" class="btn btn-info mt-3">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <section class="m-5 py-3" >
         <form action="." method="post">
             {% csrf_token %}
-             {{ form|crispy }}
+             {{ sales_form|crispy }}
              <button type="submit" class="btn btn-primary mt-3" >Search</button>
         </form>
 
@@ -54,13 +81,25 @@
         <h3>Chart</h3>
         {% if chart %}
         <img src="data:image/png;base64, {{ chart|safe }}"
-        alt=""
+        alt="" id="img"
         />
-        {% else %}
-      <p>No data</p>
+       {% else %}
+      <p>No data</p> 
         {%endif %}
-        </section>
-    
 
+    <br>
+            <button class="btn btn-success not-visible" 
+                 data-bs-toggle="modal" data-bs-target="#reportModal" id="report-btn">Add Report
+            </button>
+            
+         
+      </section>
+     
+        
+   
 
 {% endblock content %}
+
+{%block extra_scripts %}
+    <script src="{% static "/js/sales.js" %}" defer></script>
+{% endblock extra_scripts%}

@@ -27,6 +27,7 @@
       crossorigin="anonymous"
     />
     <script src="{% static 'bootstrap/js/main.js' %}" type="text/js"></script>
+    {% block extra_css%} {% endblock extra_css %}
     {% comment %}
     <link rel="stylesheet" href="{% static 'bootstrap/css/main.css' %}" />
     {% endcomment %}

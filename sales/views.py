@@ -10,8 +10,8 @@ from utils import (
     convert_date_to_dd_mm_yy,
     convert_date,
     get_chart,
-    get_graph
 )
+from reports.forms import ReportModelForm
 
 #  source env/bin/activate
 # python manage.py runserver
@@ -23,7 +23,9 @@ def home_view(request):
     merged_df = None
     main_df = None
     chart = None
-    form = SalesSearchForm(request.POST or None)
+    sales_form = SalesSearchForm(request.POST or None)
+
+    report_form = ReportModelForm()
 
     # salesman = request.user.userprofile
     # customer = Customer.objects.get(name=customer)
@@ -31,9 +33,9 @@ def home_view(request):
 
     if request.method == "POST":
         date_from = request.POST.get('date_from')
-        print(date_from)
         date_to = request.POST.get('date_to')
         chart_type = request.POST.get('chart_type')
+        result_by = request.POST.get("result_by")
 
         # access the date_created object
         sales = Sales.objects.filter(
@@ -47,7 +49,7 @@ def home_view(request):
                 apply(get_salesman_from_id)
 
             # modify date_created
-            def date_in_yy_mm_dd(x): return x.strftime("%y/%m/%d")
+            date_in_yy_mm_dd = lambda x: x.strftime("%y/%m/%d")
 
             sales_df['date_created'] = sales_df["date_created"].\
                 apply(((date_in_yy_mm_dd)))
@@ -81,6 +83,7 @@ def home_view(request):
 
                     }
                     positions_data.append(obj)
+ 
 
             positions_df = pd.DataFrame(positions_data)
 
@@ -93,9 +96,15 @@ def home_view(request):
                 as_index=False)['total_price'].agg("sum")
 
             # Charts Logic
+
+            # for grouped or merged dataframe - practice section
+            """
+            labels = main_df['transaction_id'].values
             chart = get_chart(chart_type, main_df,
-                              labels=main_df['transaction_id'].values)
-            print(chart)
+                              labels=labels)
+            """
+
+            chart = get_chart(chart_type, sales_df, result_by)
 
             sales_df = sales_df.to_html()
             positions_df = positions_df.to_html()
@@ -118,12 +127,13 @@ def home_view(request):
             }
         },
 
-        "form": form,
+        "sales_form": sales_form,
         "sales_df": sales_df,
         "positions_df": positions_df,
         "merged_df": merged_df,
         "main_df": main_df,
         "chart": chart,
+        "report_form": report_form
 
 
     }

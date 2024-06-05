@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils import timezone
-# Create your models here.
 
 
 class Report(models.Model):
@@ -8,7 +7,8 @@ class Report(models.Model):
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="reports", blank=True)
     remarks = models.TextField()
-    author = models.ForeignKey("profiles.Profile", on_delete=models.CASCADE)
+    author = models.ForeignKey("profiles.Profile",
+                               on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
