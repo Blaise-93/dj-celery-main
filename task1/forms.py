@@ -3,7 +3,9 @@ from task1.tasks import send_review_email_task
 
 class ReviewForm(forms.Form):
 
-    name = forms.CharField(label='Enter your first name', min_length=4, max_length=20, widget=forms.TextInput(
+    name = forms.CharField(label='Enter your first name', 
+                           min_length=4, max_length=20, \
+                            widget=forms.TextInput(
         attrs={'class': 'form-control mb-3',
                'placeholder': 'John Doe', 'id': 'form-firstname'}
     ))
@@ -23,5 +25,6 @@ class ReviewForm(forms.Form):
 
         send_review_email_task.delay(
             self.cleaned_data['name'], 
-            self.cleaned_data.get('email'), self.cleaned_data['review']
+            self.cleaned_data.get('email'), 
+            self.cleaned_data['review']
             )

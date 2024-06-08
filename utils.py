@@ -9,7 +9,8 @@ import re
 from io import BytesIO
 import matplotlib.pyplot as plt
 import base64
-import seaborn as sns 
+import seaborn as sns
+
 
 def slug_modifier():
     """
@@ -53,13 +54,14 @@ def get_customer_from_id(value):
     customer = Customer.objects.get(id=value)
     return customer
 
+
 def get_graph():
     """ used to get the graph after using the buffer """
 
     buffer = BytesIO()
 
     plt.savefig(buffer, format='png')
-    # set the cursor in the beginning of 
+    # set the cursor in the beginning of
     # the stream
     buffer.seek(0)
 
@@ -73,34 +75,61 @@ def get_graph():
     return graph
 
 
+def get_key(result_by):
+    if result_by == "#1":
+        key = 'transaction_id'
+        return key
+    elif result_by == "#2":
+        key = "date_created"
+        return key
+    # return key
+
+
 def get_chart(chart_type, data, result_by, **kwargs):
 
-    
     # backends is respnsible for drawing our plots, switching backends is the func we shall use.
     # is cool ANti Geometric Backend (AGG), and Switch Backend in Jupyter
     plt.switch_backend("AGG")
     fig = plt.figure(figsize=(10, 4))
+
+    key = get_key(result_by)
+
+    result_data = data.groupby(
+        key, as_index=False
+    )['total_price'].agg("sum")
+
     # refer to the forms chart_type numbers here
     if chart_type == "#1":
         print("Bar chart")
         # with matplotlib
         """  plt.bar(data["transaction_id"], data['total_price']) # you can use any of the data key as you want - eg price
         """
+        # using result by
+        plt.bar(result_data[key], result_data["total_price"])
         # with seaborn
-        sns.barplot(x="transaction_id", y='total_price', data=data)
-
+        """ sns.barplot(x="transaction_id", y='total_price', data=data)
+        """
+        # with results_ by
+        """ sns.barplot(x=key, y="total_price", data=result_data) """
     elif chart_type == "#2":
         print("Pie chart")
-        labels = kwargs.get("labels") # kwargs - are passed from main_df of the view
+        # kwargs - are passed from main_df of the view
+        """ 
+        labels = kwargs.get("labels")
         print(labels)
+      
         plt.pie(data=data, x="total_price", labels=labels)
+        """
+        # by (results by)
+        plt.pie(data=result_data, x="total_price", labels=result_data[key].values )
     elif chart_type == "#3":
         print("Line chart")
         # with matplotlib
-        #plt.plot(data["transaction_id"], data["total_price"], color="green", marker="o", linestyle="dashed")
-        plt.plot(data["transaction_id"], data["total_price"], color="green", marker="+", linestyle="dashed")
+        # plt.plot(data["transaction_id"], data["total_price"], color="green", marker="o", linestyle="dashed")
+        plt.plot(result_data[key], result_data["total_price"],
+                 color="green", marker="+", linestyle="dashed")
     else:
-        print("Oops! Failed to identify the chart type")     
+        print("Oops! Failed to identify the chart type")
     # this will adjust the size of our chart to the fig size
     plt.tight_layout()
    # plt.title(f"Basic charts: {chart_type}")
@@ -121,11 +150,10 @@ def convert_date(date):
     converted_date = datetime.strptime(date, "%y/%m/%d").strftime("%d/%m/%y")
     return converted_date
 
+
 def change_date_format(dt):
     return re.sub(r'(\d{2})/(\d{2})/(\d{2})', r'\3/\2/\1', dt)
 
 
 input_date = "24/05/03"
 converted_date = change_date_format(input_date)
-
-

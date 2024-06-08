@@ -10,8 +10,8 @@ class SalesSearchForm(forms.Form):
     )
 
     RESULT_CHOICES =  (
-        ("#1", "transaction"),
-        ("#3", "sales date"),
+        ("#1", "transaction "),
+        ("#2", "sales date"),
     )
 
     date_from = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}))

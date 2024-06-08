@@ -17,7 +17,7 @@ def review(request, *args, **kwargs):
         form = ReviewForm(request.POST)
        
         if form.is_valid():
-            print('form is valid')
+
             review = Review()
 
             review.name = form.cleaned_data['name']
@@ -33,7 +33,8 @@ def review(request, *args, **kwargs):
 
 
 def files(file):
-    """ A helper function to upload and read individual file when sending emails to
+    """ A helper function to upload and read individual file
+          when sending emails to
     the user. """
     with open(file, "r") as f:
         data = f.read()

@@ -4,6 +4,9 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 
 
+
+
+
 def send_review_email(name, email, review):
     
     context = {

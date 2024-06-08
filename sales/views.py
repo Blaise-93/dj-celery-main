@@ -11,6 +11,7 @@ from utils import (
     convert_date,
     get_chart,
 )
+from django.contrib import messages
 from reports.forms import ReportModelForm
 
 #  source env/bin/activate
@@ -23,6 +24,7 @@ def home_view(request):
     merged_df = None
     main_df = None
     chart = None
+    no_data = None
     sales_form = SalesSearchForm(request.POST or None)
 
     report_form = ReportModelForm()
@@ -49,7 +51,7 @@ def home_view(request):
                 apply(get_salesman_from_id)
 
             # modify date_created
-            date_in_yy_mm_dd = lambda x: x.strftime("%y/%m/%d")
+            def date_in_yy_mm_dd(x): return x.strftime("%y/%m/%d")
 
             sales_df['date_created'] = sales_df["date_created"].\
                 apply(((date_in_yy_mm_dd)))
@@ -83,7 +85,6 @@ def home_view(request):
 
                     }
                     positions_data.append(obj)
- 
 
             positions_df = pd.DataFrame(positions_data)
 
@@ -111,21 +112,17 @@ def home_view(request):
             merged_df = merged_df.to_html()
             main_df = main_df.to_html()
 
+        else:
+            context = {
+                "no_data": {
+                    "excl": "Holy Molly",
+                    'phrase': "No data available in this date range."
+                }
+            }
+            return render(request, "sales/index.html",context)
+
         # print(date_from, date_to, chart_type)
     context = {
-        "students": {
-            "class": "JS2",
-            "name": "Onyekwelu Ifeanyi",
-            "married": "Single",
-            "address": {
-                "state": "Lagos state",
-                "country": "Nigeria",
-                "hometown": "Ogba",
-                "street": "1234 Main street Avenue, Margret \
-                    Catherite, Ogba, Ikeja, Lagos State",
-
-            }
-        },
 
         "sales_form": sales_form,
         "sales_df": sales_df,
