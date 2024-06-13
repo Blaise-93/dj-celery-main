@@ -24,7 +24,6 @@ def home_view(request):
     merged_df = None
     main_df = None
     chart = None
-    no_data = None
     sales_form = SalesSearchForm(request.POST or None)
 
     report_form = ReportModelForm()

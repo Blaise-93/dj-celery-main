@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="{% static '/css/sales.css' %}">
 {% endblock extra_css %}
 
+    
 
-   <!-- Modal -->
+   <!-- Modal 3:27mins and 4:00hr--> 
    <div class="modal fade" id="reportModal" tabindex="-1"
          aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -19,24 +20,20 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="modal-body">
-                    <div id="alert-box">
-                        <form id="report-form" method='post'> 
+                    <div>
+                        <div id="alert-box"></div>
+                        <form id="report-form" method='post'>
+                      
                             {% csrf_token %}
                             {{ report_form|crispy }}
-                            <button type="submit" class="btn btn-info mt-3">Save</button>
+                            <button type="submit"
+                             class="btn btn-info mt-3">Save</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    {% if no_data %}
-        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <strong>{{no_data.excl }}</strong> {{no_data.phrase }}.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
 
     <section class="m-5 py-3" >
         <form action="." method="post">
@@ -96,7 +93,8 @@
 
     <br>
             <button class="btn btn-success not-visible" 
-                 data-bs-toggle="modal" data-bs-target="#reportModal" id="report-btn">Add Report
+                 data-bs-toggle="modal" data-bs-target="#reportModal" 
+                 id="report-btn">Add Report
             </button>
             
          
@@ -108,5 +106,5 @@
 {% endblock content %}
 
 {%block extra_scripts %}
-    <script src="{% static "/js/sales.js" %}" defer></script>
+    <script src="{% static "/js/salesAndReport.js" %}"></script>
 {% endblock extra_scripts%}
