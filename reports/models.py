@@ -30,5 +30,18 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         if self.week_number == "":
             self.week_number = self.start_date.isocalendar()[1]
-            self.start_date = timezone.datetime.date()
+            print(self.start_date.isocalendar())
+            # self.start_date = timezone.datetime.date()
         super().save(*args, **kwargs)
+
+
+class Product(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    price= models.DecimalField(max_digits=12, decimal_places=2)
+
+    image = models.CharField(max_length=100)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self) -> str:
+        return self.title

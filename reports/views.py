@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Project, Report
+from .models import Project, Report,  Product
 import pandas as pd
 from plotly.offline import plot
 import plotly.express as px
@@ -11,6 +11,37 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ReportModelForm
+import requests
+
+
+def products(request):
+
+    products = Product.objects.all()
+    context = {"products":products}
+    return render(request, "reports/product.html", context)
+
+def load_products(request):
+    context = None
+
+    url = 'https://fakestoreapi.com/products'
+    fake_products = requests.get(url)
+    print(fake_products.json())
+    product = fake_products.json()
+
+    for res in product:
+        products = Product.objects.create(
+            title=res['title'],
+            description=res['description'],
+            price=res['price'],
+            image=res['image']
+        )
+
+        context = {
+            "products": products
+        }
+    
+
+    return render(request, "reports/load_products.html", context)
 
 
 def project_stats(request):
@@ -129,3 +160,42 @@ class ReportCreateView(LoginRequiredMixin,
         return JsonResponse({"msg": "Your report was successfully saved"})
     return JsonResponse({})
  """
+def bulky_batch(request):
+    # example of how to handle a bulky query instances
+    sent_favorites = set()
+    existing_favorites = set()
+    current_favorites = {}
+
+    bulk_inserts, bulk_updates, bulk_deletes = [], [], []
+
+    favorites = {} # an instance of a model 
+
+    for favorite_number in sent_favorites - existing_favorites:
+        bulk_inserts.append(Report(
+            author=request.user.userprofile, **favorites.get(favorite_number))
+            )
+
+
+    for favorite_number in existing_favorites - sent_favorites:
+        bulk_deletes.append(favorite_number)
+
+
+    for favorite_number in sent_favorites.intersection(existing_favorites):
+        favorite = current_favorites.get(favorite_number)
+        favorite.order = favorites.get(favorite_number).get("order")
+        bulk_updates.append(favorite)
+
+
+    if bulk_inserts:
+        Report.objects.bulk_create(bulk_inserts, batch_size=1000)
+
+    if bulk_updates:
+        Report.objects.bulk_update(bulk_updates, ['order'], batch_size=1000)
+
+    if bulk_deletes:
+        Report.objects.filter(
+            author=request.user.userprofile, name__in=bulk_deletes).delete() 
+        
+    return render(request, "")
+
+

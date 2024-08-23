@@ -165,3 +165,9 @@ def sales_delete(request, pk):
     context = {"sales": sales}
 
     return render(request, 'sales/sales_delete.html', context)
+
+
+""" 
+
+
+ """

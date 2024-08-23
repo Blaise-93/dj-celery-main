@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+   
+    {% comment %} {% autoescape off %}
+      {{ plot_div }}
+    {% endautoescape %} {% endcomment %}
+    {{ products|safe }}
+
+{% endblock content %}

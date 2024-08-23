@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+   <h1>FAKE ME</h1>
+   {% for product in products %}
+    <p>{{product.title}}</p>
+    <p>{{product.discription}}</p>
+    <img src='{{ product.image.url }}' alt="{{product.discription }}">
+    <p><a href="{{product.image}}">{{product.image}}</a></p>
+    <p>{{product.date_created }}</p>
+   
+   {% endfor %}
+
+{% endblock content %}
