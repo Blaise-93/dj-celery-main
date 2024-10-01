@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% block content %}
+
+<section class='container m-4'>
+  {% for product in products %}
+  <div>
+    <p>{{product.name}}</p>
+    <p>{{product.group_name}}</p>
+    <p>{{product.description }}</p>
+    <p>{{product.unit}}</p>
+    <p>{{product.sales_price }}</p>
+    <p>{{product.purchase_price }}</p>
+    <p>{{product.date_created }}</p>
+  </div>
+
+  {% endfor %}
+</section>
+
+{% endblock content %}

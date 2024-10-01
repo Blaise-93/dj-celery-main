@@ -35,18 +35,21 @@ INSTALLED_APPS = [
     'posts',
     'task1',
     "chatrooms",
+    'inventory',
     'task2',
     "chats",
-    "channels",
-    "crispy_forms",
-    "blogs",
-    "blogs_api",
-    'crispy_bootstrap5',
+   
 
     # third party apps
     'django_celery_beat',
     "django_browser_reload",
-    'rest_framework'
+    'rest_framework',
+    'mptt',
+     "channels",
+    "crispy_forms",
+    "blogs",
+    "blogs_api",
+    'crispy_bootstrap5',
 ]
 
 # python manage.py runserver
@@ -147,7 +150,7 @@ CELERY_BEAT_SCHEDULE = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -201,5 +204,14 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 
-
 # https://ratedwap.com/cat/old/Downloads/movie/215.html
+
+
+# Elastic search
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    }
+}
+
+
