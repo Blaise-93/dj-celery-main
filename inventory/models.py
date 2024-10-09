@@ -100,8 +100,8 @@ class Stock(models.Model):
         default=False,
         help_text="Leave this field blank; it will be \
             automatically generated for you.")
-    expiration_date = models.DateField()
-    manufactured_date = models.DateField()
+    expiration_date = models.DateField(db_comment='the expiration date of the product')
+    manufactured_date = models.DateField(db_comment="the date the stocked product was manufactured")
     user = models.ForeignKey("profiles.Profile", on_delete=models.CASCADE)
     slug = models.SlugField(blank=True, null=True, editable=False,
                             help_text="Leave this field blank; it will be \
@@ -265,14 +265,14 @@ class Supplier(models.Model):
         return super().save(*args, **kwargs)
 
 
-class Order(models.Model):
+class PurchaseOrder(models.Model):
 
     """
     Model representing an order.
 
     Attributes:
         status_choices (tuple): Choices for the status of the order.
-        order (ForeignKey): Reference to the supplier.
+        supplier (ForeignKey): Reference to the supplier.
         status (str): Status of the order.
         order_number (str): Number of the order.
         user (ForeignKey): Reference to the user profile.
@@ -308,17 +308,21 @@ class Order(models.Model):
     slug = models.SlugField(blank=True, null=True, editable=False,
                             help_text="Leave this field blank; it will be \
             automatically generated for you.",)
+    total_cost = models.DecimalField(max_digits=18, decimal_places=2)
     ordered = models.BooleanField(
         default=False,
         help_text="Tick the checkbox if ordered")
     date_supplied = models.DateField(blank=True, editable=False)
     date_created = models.DateTimeField('date created', auto_now_add=True)
     date_updated = models.DateTimeField('date updated', auto_now=True)
-    
-    def  __str__(self):
+
+    class Meta:
+        ordering = ['-date_created']
+
+    def __str__(self):
         return f'''Order placed from {self.supplier.get_full_name()}
           of {self.supplier.company_of_the_supplier} with order code: {self.order_number}'''
-    
+
     def save(self, *args, **kwargs):
         """
         Saves the order instance.
@@ -334,6 +338,57 @@ class Order(models.Model):
         return super().save(*args, **kwargs)
 
 
+class OrderItem(models.Model):
+
+    """
+    Order item manages item-level inventory and manage order
+    fulfillment and shipping.
+
+    ## Benefits: 
+       Order item table allows:
+        - Easy addition or removal of items from an order
+        - Simple updates to item quantities or prices
+        - avoidance of data duplication
+        - avoidance of data inconsistency
+
+
+
+
+    Attributes:
+
+        purchase order (ForeignKey): Reference to the purchase order.
+        product (ForeignKey): Reference to the product.
+        quantity (int): Quantity of the ordered item purchased.
+        unit price (int): Unit price of the order item.
+        user (ForeignKey): Reference to the user profile.
+        slug (str): Slug for the order.
+        date_supplied (date): Date when the order was supplied.
+        date_created (datetime): Date when the order record was created.
+        date_updated (datetime): Date when the order record was last updated.
+
+    """
+    class Meta:
+        ordering = ['-date_created']
+
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    unit_price = models.DecimalField(decimal_places=2, max_digits=18)
+    user = models.ForeignKey("profiles.Profile", on_delete=models.CASCADE)
+    slug = models.SlugField(
+        blank=True, null=True,
+        editable=False,
+        help_text="Leave this field blank; it will be \
+            automatically generated for you.",
+    )
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f'{self.purchase_order.order_number}'
+
+
 class Refund(models.Model):
     """
     Model representing a refund.
@@ -347,7 +402,7 @@ class Refund(models.Model):
         date_created (datetime): Date when the refund record was created.
         date_updated (datetime): Date when the refund record was last updated.
     """
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE)
     customer_full_name = models.CharField(max_length=30)
     reason = models.TextField()
     accepted = models.BooleanField(
@@ -361,8 +416,19 @@ class Refund(models.Model):
             automatically generated for you.",
     )
 
-    def __str__(self) -> str:
-        return self.customer_full_name 
-
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return self.customer_full_name
+
+    def save(self, *args, **kwargs):
+        """
+        Saves the supplier instance.
+
+        Sets the date_supplied to the current date and generates a slug.
+        """
+
+        self.slug = slug_modifier()
+        return super().save(*args, **kwargs)
+

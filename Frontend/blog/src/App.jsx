@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+import { useEffect, useState } from "react";
+import { PostLoadingComponent } from "./components/PostLoading";
+import { Post } from "./components/Post";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [appState, setAppState] = useState({ isLoading: true, posts: null });
+
+  const PostLoading = PostLoadingComponent(Post);
+
+  useEffect(() => {
+    const url = "http://127.0.0.1:8000/api";
+
+    setAppState({ isLoading: true });
+    fetch(url).then(res => res.json()
+        .then(posts =>  {
+          setAppState({isLoading:false, posts:posts})
+        })
+  );
+      
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="app-container">
+        <h1 className="post-info">Latest Posts</h1>
+        <PostLoading isLoading={appState.isLoading} posts={appState.posts}/>
+    </div>
   )
+
 }
 
-export default App
+export default App;

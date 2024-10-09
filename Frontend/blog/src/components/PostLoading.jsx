@@ -1,15 +1,13 @@
 
+export const PostLoadingComponent = (Component) => {
 
-// This is a React Router v6 app
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="users/*" element={<Users />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return function PostLoadingComponent({isLoading, ...props}) {
+    // if not loading  
+    if(!isLoading) return <Component {...props} />
+    return (
+       <p>
+        We are waiting for the data to load!...
+       </p>
+    )
+  }
 }

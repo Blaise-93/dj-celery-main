@@ -7,7 +7,7 @@ from .models import (
     Stock,
     StockMovement,
     Supplier,
-    Order,
+    PurchaseOrder,
     Refund
 )
 
