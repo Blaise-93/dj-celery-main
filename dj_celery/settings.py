@@ -80,15 +80,15 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        'rest_framework.permissions.IsAdminUser'
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ]
 }
 
 # Permissions
-#AllowAny
+# AllowAny
 # IsAuthenticated
-#IsAdminUser
-#IsAuthenticatedOrReadOnly
+# IsAdminUser
+# IsAuthenticatedOrReadOnly
 
 TEMPLATES = [
     {
@@ -119,6 +119,25 @@ DATABASES = {
     }
 }
 
+
+""" DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.postgresql' , #ENUOHP,
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME': os.getenv("POSTGRES_NAME"),
+        "USER": os.getenv('POSTGRES_USER'),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": int(os.getenv("POSTGRES_PORT"))
+    }
+
+} """
+
+# DJANGO TENANTS
+""" DATABASE_ROUTERS = [
+    'django_tenants.routers.TenantSyncRouter',
+]
+ """
 
 AUTH_USER_MODEL = 'profiles.User'
 
@@ -228,3 +247,5 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:5173'
 ]
+
+

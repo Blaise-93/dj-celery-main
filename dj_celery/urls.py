@@ -5,18 +5,19 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
+    #path('api-auth/', include('rest_framework.urls')),
     path('blogs/', include('blogs.urls', namespace='blogs')),
     path('chatroom/', include('chatrooms.urls', namespace='chatrooms')),
     path('', include('task1.urls', namespace='task1')),
    
     path('api/', include('blogs_api.urls', namespace='blogs_api')),
-
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('products/', include('products.urls', namespace='products')),
     path('customers/', include('customers.urls', namespace='customers')),
     path('sales/', include('sales.urls', namespace='sales')),
     path('reports/', include('reports.urls', namespace='reports')),
     path('inventory/', include('inventory.urls', namespace='inventory')),
+    path('app/', include('app.urls', namespace='app')),
     
 
 

@@ -1,20 +1,20 @@
 from rest_framework import generics
 from blogs.models import Post
 from .serializers import PostSerializer
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
-
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, AllowAny, DjangoModelPermissionsOrAnonReadOnly
 
 
 class PostList(generics.ListCreateAPIView):
     """ can post and list individual posts"""
 
     serializer_class = PostSerializer
-    permission_classes = [IsAdminUser, ]
+    #permission_classes = [IsAdminUser ]
 
     def get_queryset(self):
         author = self.request.user
-        queryset = Post.objects.all() #filter(author=author.id)
+        queryset = Post.objects.all()  # filter(author=author.id)
         return queryset
+
 
 """ 
 Permission Levels - DRF
@@ -22,6 +22,7 @@ Permission Levels - DRF
     view level
     object level
 """
+
 
 class PostDetail(generics.RetrieveAPIView):
     """ can get individual post"""
