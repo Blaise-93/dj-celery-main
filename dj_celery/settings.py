@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from django.utils import timezone
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -17,8 +18,13 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+# shared across the entire system
+SHARED_APPS = [
+
     "daphne",
+    'django_tenants',
+    "profiles",
+    'app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -26,10 +32,32 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
+    # third party apps
+
+    'django_celery_beat',
+    'rest_framework',
+    'mptt',
+    "channels",
+    "crispy_forms",
+    'corsheaders',
+    'crispy_bootstrap5',
+
+]
+
+# 2024-11-10 17:55:18.659813
+if DEBUG:
+    SHARED_APPS += [
+        "django_browser_reload",  # Relaod automatically browser after changes
+    ]
+
+# are basically for the clients that works on the domain
+TENANT_APPS = [
     # local apps
+
+    "profiles",
     "customers",
     "products",
-    "profiles",
     "reports",
     "sales",
     'posts',
@@ -41,22 +69,23 @@ INSTALLED_APPS = [
     "blogs",
     "blogs_api",
 
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
 
-    # third party apps
-    'django_celery_beat',
-    "django_browser_reload",
-    'rest_framework',
-    'mptt',
-    "channels",
-    "crispy_forms",
-    'corsheaders',
-    'crispy_bootstrap5',
 
 ]
+
+INSTALLED_APPS = SHARED_APPS + \
+    [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 # python manage.py runserver
 
 MIDDLEWARE = [
+   
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -66,9 +95,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+
 ]
 
 ROOT_URLCONF = 'dj_celery.urls'
+
+# use the public schema accept for the project url if it can't be found
+
+PUBLIC_SCHEMA_URLCONFIG = 'app.urls'
 
 # CRISPY FORMS
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
@@ -80,7 +114,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+        'rest_framework.permissions.IsAdminUser'
     ]
 }
 
@@ -112,15 +146,15 @@ ASGI_APPLICATION = "dj_celery.asgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-""" DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.postgresql' , #ENUOHP,
         'ENGINE': 'django_tenants.postgresql_backend',
@@ -131,15 +165,24 @@ DATABASES = {
         "PORT": int(os.getenv("POSTGRES_PORT"))
     }
 
-} """
+}
 
-# DJANGO TENANTS
-""" DATABASE_ROUTERS = [
-    'django_tenants.routers.TenantSyncRouter',
-]
- """
 
 AUTH_USER_MODEL = 'profiles.User'
+
+DATABASE_ROUTERS = [
+    'django_tenants.routers.TenantSyncRouter',
+]
+
+TENANT_MODEL = 'app.Client'
+
+TENANT_DOMAIN_MODEL = 'app.Domain'
+
+PUBLIC_SCHEMA_NAME = "public"
+
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
+TENANT_COLOR_ADMIN_APPS = True
+AUTO_DROP_SCHEMA = True
 
 
 # Password validation
@@ -249,3 +292,10 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
+# <https://github.com/django-tenants/django-tenants>. :)
+
+""" 
+TENANT_SUBFOLDER_PREFIX = "clients"
+In the example given above, the prefixed path ``/r`` will become ``/clients``.
+e.g. http://www.mydomain.local/clients/schemaname/ instead of http://www.mydomain.
+ """

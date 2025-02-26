@@ -8,6 +8,9 @@ import './css/footer.css'
 import {Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
+import SignUpUSer from './components/register/register.jsx'
+//import { Register } from './components/Users.jsx'
+//import { SignUp } from './components/register/register.jsx'
 
 
 const routing = (
@@ -16,6 +19,9 @@ const routing = (
         <Header />
         <Routes>
           <Route path='/' element={<App/>} />
+          <Route path='/register/' element={<SignUpUSer/>} />
+
+         {/*  <Route path='/register' element={<Register/>} /> */}
         </Routes>
         <Footer/>
       </React.StrictMode>   

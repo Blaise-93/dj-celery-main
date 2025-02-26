@@ -1,10 +1,5 @@
-import AppBar from "@mui/material/AppBar";
-import Button from "@mui/material/Button";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import CssBaseline from "@mui/material/CssBaseline";
 import companyLogo from '../assets/company/Blaisemart.jpg'
-
+import {NavLink} from 'react-router-dom'
 
 function Header() {
   return (
@@ -20,7 +15,7 @@ function Header() {
           <ul>
             <li>Home</li>
             <li>Pricing</li>
-            <li>Blog</li>
+            <li><a href='/'>Blog</a></li>
           </ul>
         </div>
         {/* <div className="navbar-right-items items">
